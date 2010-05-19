@@ -3,6 +3,7 @@ use perl5i::latest;
 use File::CountLines qw/ count_lines /;
 use Term::Sk;
 use Regexp::Assemble;
+use Time::HiRes qw/ gettimeofday tv_interval /;
 
 my $ordalisti = 'ordalisti.txt';
 my $lines     = count_lines($ordalisti);
@@ -27,4 +28,27 @@ while (my $ord = <$listi>) {
     $progress->up;
     $ra->add( $sorted->quotemeta );
 }
-say $ra->re;
+$progress->close;
+my $giant_regex = $ra->re;
+my $matcher = qr/^(?:$giant_regex)$/;
+
+say "Ask if your word matches:";
+while (my $query = <STDIN>) {
+    $query->chomp;
+    my $start_time = [gettimeofday()];
+
+    # Check if we got a match
+    my $matched = $query ~~ $matcher;
+    given ($matched) {
+        when (1) {
+            say "<$query> matched a word in our db";
+        }
+        default {
+            say "No match for <$query>";
+        }
+    }
+
+    my $elapsed = tv_interval($start_time);
+    say sprintf "Replied %.4f seconds", $elapsed;
+}
+
