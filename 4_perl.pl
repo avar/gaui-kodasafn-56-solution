@@ -35,20 +35,21 @@ my $matcher = qr/^(?:$giant_regex)$/;
 say "Ask if your word matches:";
 while (my $query = <STDIN>) {
     $query->chomp;
+    my $sorted = $query->split(qr//)->sort->join("");
     my $start_time = [gettimeofday()];
 
     # Check if we got a match
-    my $matched = $query ~~ $matcher;
+    my $matched = $sorted ~~ $matcher;
     given ($matched) {
         when (1) {
-            say "<$query> matched a word in our db";
+            say "<$query> (<$sorted>) matched a word in our db";
         }
         default {
-            say "No match for <$query>";
+            say "No match for <$query> (<$sorted>)";
         }
     }
 
     my $elapsed = tv_interval($start_time);
-    say sprintf "Replied %.4f seconds", $elapsed;
+    say sprintf "Replied %.10f seconds", $elapsed;
 }
 
