@@ -38,7 +38,7 @@ my $giant_regex = $ra->re;
 $matcher = qr/^(?:$giant_regex)$/;
 
 my $elapsed = tv_interval($start_time);
-say "Made regex in %.4f seconds", $elapsed;
+say sprintf "Made regex in %.4f seconds", $elapsed;
 }
 
 # Benchmark questions
