@@ -32,7 +32,7 @@ while (my $ord = <$listi>) {
 }
 $progress->close;
 
-say "Making giant regex";
+say "Making giant regex...";
 my $start_time = [gettimeofday()];
 my $giant_regex = $ra->re;
 $matcher = qr/^(?:$giant_regex)$/;
