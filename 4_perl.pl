@@ -6,6 +6,7 @@ use Regexp::Assemble;
 use Time::HiRes qw/ gettimeofday tv_interval /;
 
 my $ordalisti = 'ordalisti.txt';
+my $interactive = $ARGV[0];
 my $lines     = count_lines($ordalisti);
 my $matcher;
 
@@ -47,15 +48,19 @@ open my $listi, "cat $ordalisti | iconv -f iso-8859-1 -t utf-8 |";
 my $time_to_match = 0;
 
 # Make the user ask us stuff
-#say "Ask if your word matches:";
-#while (my $query = <STDIN>) {
 my %match;
+if ($interactive) {
+say "Ask if your word matches:";
+$listi = *STDIN;
+}
 while (my $query = <$listi>) {
     $query->chomp;
     my $sorted = $query->split(qr//)->sort->join("");
 
+    say "  Matching <$query> as <$sorted>..";
+
     # Fuzz some words so not all will match, benchmarks misses
-    $sorted =~ s/a/b/g;
+    $sorted =~ s/a/b/g unless $interactive;
 
     # Check if we got a match
     my $start_time = [gettimeofday()];
@@ -65,17 +70,13 @@ while (my $query = <$listi>) {
 
     $match{$matched}++;
 
-    # given ($matched) {
-    #     when (1) {
-    #         my 
-    #         say "<$query> (<$sorted>) matched a word in our db";
-    #     }
-    #     default {
-    #         say "No match for <$query> (<$sorted>)";
-    #     }
-    # }
+    if ($interactive) {
+        say $matched
+            ? "    <$query> (<$sorted>) matched a word in our db"
+            : "    No match for <$query> (<$sorted>)";
+    }
 
-    # say sprintf "Replied %.10f seconds", $elapsed;
+    say sprintf "  ..Replied %.10f seconds", $elapsed;
 }
 
 say sprintf "Matched $lines words took %.4f seconds, or %.8f seconds per word", $time_to_match, $time_to_match / $lines;
