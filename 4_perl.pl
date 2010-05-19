@@ -31,8 +31,14 @@ while (my $ord = <$listi>) {
     $ra->add( $sorted->quotemeta );
 }
 $progress->close;
+
+say "Making giant regex";
+my $start_time = [gettimeofday()];
 my $giant_regex = $ra->re;
 $matcher = qr/^(?:$giant_regex)$/;
+
+my $elapsed = tv_interval($start_time);
+say "Made regex in %.4f seconds", $elapsed;
 }
 
 # Benchmark questions
