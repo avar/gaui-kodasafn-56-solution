@@ -32,6 +32,7 @@ $progress->close;
 my $giant_regex = $ra->re;
 my $matcher = qr/^(?:$giant_regex)$/;
 
+# Make the user ask us stuff
 say "Ask if your word matches:";
 while (my $query = <STDIN>) {
     $query->chomp;
